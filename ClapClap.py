@@ -13,7 +13,15 @@ CLAP = 0
 #determines index of SOUND_LIST
 SOUND_COUNT = 0
 #holds different "meme review" sounds
-SOUND_LIST = ['meme1.wav', 'meme2.wav' , 'meme3.wav', 'meme4.wav' , 'meme5.wav']
+SOUNDFILE_LIST = ['meme1.wav', 'meme2.wav' , 'meme3.wav', 'meme4.wav' , 'meme5.wav']
+
+#loads the sounds to memory
+SOUND_LIST = []
+script_dir = os.path.dirname(__file__)
+for file in SOUNDFILE_LIST:
+    abs_file_path = os.path.join(script_dir, file)
+    with open(abs_file_path, 'rb') as data:
+        SOUND_LIST.append(data.read())
 
 FORMAT = pyaudio.paInt16 
 SHORT_NORMALIZE = (1.0/32768.0)
@@ -60,10 +68,8 @@ def increase_count(time):
        CLAP=time
     elif((time-CLAP)<=2): #if second clap within 2 seconds of first one
         print("meme review!")
-        #get cwd and play sounds on same directory
-        script_dir = os.path.dirname(__file__)
-        abs_file_path = os.path.join(script_dir, SOUND_LIST[SOUND_COUNT%5])
-        winsound.PlaySound(abs_file_path, winsound.SND_FILENAME)
+        #play sounds from memory
+        winsound.PlaySound(SOUND_LIST[SOUND_COUNT%5], winsound.SND_MEMORY)
         SOUND_COUNT+=1
         CLAP=0 #reset clap counter
     else: #second clap more than 2 seconds apart from first clap
